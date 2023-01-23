@@ -3,7 +3,7 @@ variables:
   MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true"
   DOCKER_REGISTRY: $CI_REGISTRY
   DOCKER_TLS_CERTDIR: ''
-  DOCKER_HOST: tcp://localhost:2375  
+#  DOCKER_HOST: tcp://localhost:2375  
 
 cache:
   paths:
