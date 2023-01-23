@@ -3,14 +3,15 @@ variables:
   MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true"
   DOCKER_REGISTRY: $CI_REGISTRY
   DOCKER_TLS_CERTDIR: ''
-  DOCKER_HOST: tcp://localhost:2375
+  DOCKER_HOST: tcp://docker:2375
+  DOCKER_OPTS: "--insecure-registry $CI_REGISTRY"
 
 cache:
   paths:
     - .m2/repository
 
 services:
-  - name : docker:dind
+  - name : docker:20.10.16-dind
     entrypoint: ["dockerd-entrypoint.sh"]
     command: ["--insecure-registry","$CI_REGISTRY"]
 
@@ -26,15 +27,16 @@ maven-build:
   script: "./mvnw clean compile"
 
 maven-test:
-  image: maven:3.6.3-openjdk-11
+  image: maven:3.6.3-openjdk-8
   stage: test
   before_script: "chmod +x mvnw"
   script: "./mvnw test"
 
 docker-build:
-  image: docker:latest
+  image: docker:20.10.16
   stage: package
   before_script:
+    - docker info
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
   script:
     - docker pull $CI_REGISTRY_IMAGE:latest || true
