@@ -3,9 +3,9 @@ variables:
   MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true"
   DOCKER_REGISTRY: $CI_REGISTRY
   DOCKER_TLS_CERTDIR: ''
-  DOCKER_DRIVER: overlay2
-  DOCKER_HOST: tcp://docker:2375 
-#  DOCKER_HOST: tcp://localhost:2375  
+  # DOCKER_DRIVER: overlay2
+  # DOCKER_HOST: tcp://docker:2375 
+  # DOCKER_HOST: tcp://localhost:2375  
 
 cache:
   paths:
@@ -15,7 +15,7 @@ services:
   - name : docker:20.10.16-dind
     alias: docker
     entrypoint: ["dockerd-entrypoint.sh"]
-    command: ["--insecure-registry","$CI_REGISTRY"]
+    command: ["--insecure-registry","192.168.0.10:5005"]
 
 stages:
   - build
@@ -38,7 +38,7 @@ docker-build:
   image: docker:20.10.16
   stage: package  
   script:
-    - docker info
+    # - docker info
     - docker login -u $TOKEN_USER -p $TOKEN_PW $CI_REGISTRY
     - docker pull $CI_REGISTRY_IMAGE:latest || true
     - docker build --cache-from $CI_REGISTRY_IMAGE:latest --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA --tag $CI_REGISTRY_IMAGE:latest .
